@@ -1,77 +1,69 @@
 
-import React, { useState } from 'react';
-import { Row, Col, Card, Table, Slider, Statistic, Typography, InputNumber } from 'antd';
-import { LineChartOutlined, DollarCircleOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Table, Typography, Card, Row, Col, Statistic, Input } from 'antd'; // Removed InputNumber
+import { LineChartOutlined } from '@ant-design/icons'; // Removed DollarCircleOutlined
 
 const { Title, Text } = Typography;
+const { Search } = Input;
 
-// Mock data for rate components
-const rateCompositionData = [
-  { key: '1', component: 'Labor', cost: 350000, percentage: 23.33 },
-  { key: '2', component: 'Material', cost: 850000, percentage: 56.67 },
-  { key: '3', component: 'Equipment', cost: 200000, percentage: 13.33 },
-  { key: '4', component: 'Overhead', cost: 100000, percentage: 6.67 },
+// Mock data for rate analysis
+const data = [
+  {
+    key: '1',
+    resource: 'Cement (Portland)',
+    unit: 'bag',
+    aestimator_rate: 68000,
+    market_rate_1: 70000,
+    market_rate_2: 67500,
+  },
+  {
+    key: '2',
+    resource: 'Reinforcement Steel',
+    unit: 'kg',
+    aestimator_rate: 15500,
+    market_rate_1: 16000,
+    market_rate_2: 15200,
+  },
+  // ... more data
+];
+
+const columns = [
+  { title: 'Resource', dataIndex: 'resource', key: 'resource' },
+  { title: 'Unit', dataIndex: 'unit', key: 'unit' },
+  {
+    title: 'AEstimator Rate (Rp)',
+    dataIndex: 'aestimator_rate',
+    key: 'aestimator_rate',
+    render: (rate: number) => rate.toLocaleString(),
+  },
+  {
+    title: 'Supplier A Rate (Rp)',
+    dataIndex: 'market_rate_1',
+    key: 'market_rate_1',
+    render: (rate: number) => rate.toLocaleString(),
+  },
+  {
+    title: 'Supplier B Rate (Rp)',
+    dataIndex: 'market_rate_2',
+    key: 'market_rate_2',
+    render: (rate: number) => rate.toLocaleString(),
+  },
 ];
 
 const RateAnalysis: React.FC = () => {
-  const [profitMargin, setProfitMargin] = useState(15);
-
-  const columns = [
-    { title: 'Component', dataIndex: 'component', key: 'component' },
-    { title: 'Cost', dataIndex: 'cost', key: 'cost', render: (cost: number) => `Rp ${cost.toLocaleString()}` },
-    { title: 'Percentage', dataIndex: 'percentage', key: 'percentage', render: (perc: number) => `${perc}%` },
-  ];
-
-  const subtotal = rateCompositionData.reduce((acc, item) => acc + item.cost, 0);
-  const profit = subtotal * (profitMargin / 100);
-  const finalRate = subtotal + profit;
-
   return (
     <div>
-      <Title level={4}>Rate Analysis for Item: A.1.1 - Foundation Concrete</Title>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} md={12}>
-          <Card title="Rate Composition (per m³)">
-            <Table
-              columns={columns}
-              dataSource={rateCompositionData}
-              pagination={false}
-              summary={() => (
-                <Table.Summary.Row>
-                  <Table.Summary.Cell index={0}><Text strong>Subtotal</Text></Table.Summary.Cell>
-                  <Table.Summary.Cell index={1}><Text strong>Rp {subtotal.toLocaleString()}</Text></Table.Summary.Cell>
-                  <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                </Table.Summary.Row>
-              )}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} md={12}>
-            <Row gutter={[16, 16]}>
-                <Col span={24}>
-                    <Card title="Market & Historical Benchmark">
-                         <LineChartOutlined style={{ fontSize: 96, color: '#ccc', display: 'block', textAlign: 'center', width: '100%' }}/>
-                         <Text type="secondary" style={{display: 'block', textAlign: 'center'}}>S-Curve analysis and benchmark chart placeholder.</Text>
-                    </Card>
-                </Col>
-                <Col span={24}>
-                    <Card title="Final Rate Calculation">
-                        <Statistic title="Subtotal" value={subtotal} prefix="Rp" />
-                        <div style={{margin: '16px 0'}}>
-                            <Text>Profit Margin ({profitMargin}%)</Text>
-                            <Slider
-                                min={0}
-                                max={50}
-                                onChange={setProfitMargin}
-                                value={profitMargin}
-                            />
-                        </div>
-                        <Statistic title="Final Proposed Rate" value={finalRate} precision={2} prefix="Rp" valueStyle={{color: '#3f8600'}}/>
-                    </Card>
-                </Col>
-            </Row>
-        </Col>
-      </Row>
+        <Title level={4}>Market Rate Analysis</Title>
+        <Row gutter={16} style={{ marginBottom: 24}}>
+            <Col span={8}>
+                <Card>
+                    <Statistic title="Inflation Adjustment" value={2.5} suffix="%" prefix={<LineChartOutlined />} />
+                </Card>
+            </Col>
+            {/* Other stats can go here */}
+        </Row>
+        <Search placeholder="Search for a resource..." style={{marginBottom: 16, width: 300}} />
+        <Table columns={columns} dataSource={data} pagination={false} bordered />
     </div>
   );
 };

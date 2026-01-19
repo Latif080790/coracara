@@ -1,113 +1,96 @@
 
 import React from 'react';
-import { Table, Tag, Typography, Card, Row, Col, Progress } from 'antd';
-import { WarningOutlined, ThunderboltOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Table, Tag, Typography, Progress, Card, Row, Col } from 'antd';
+// Removed unused icons
 
 const { Title } = Typography;
 
-// Mock data for risk register
+// Mock data for risk analysis
 const riskData = [
   {
     key: '1',
-    riskId: 'R001',
-    description: 'Unexpected site conditions',
-    probability: 'High',
-    impact: 'Medium',
-    score: 15,
-    mitigation: 'Geotechnical survey planned',
-    status: 'Pending',
+    risk_id: 'R-001',
+    description: 'Material price fluctuation',
+    category: 'Financial',
+    impact: 'High',
+    likelihood: 'Medium',
+    mitigation_status: 'Planned',
   },
   {
     key: '2',
-    riskId: 'R002',
-    description: 'Material price escalation',
-    probability: 'Medium',
+    risk_id: 'R-002',
+    description: 'Unexpected subsurface soil conditions',
+    category: 'Technical',
     impact: 'High',
-    score: 20,
-    mitigation: 'Bulk purchase agreement in progress',
-    status: 'In Progress',
+    likelihood: 'Low',
+    mitigation_status: 'Mitigated',
   },
   {
     key: '3',
-    riskId: 'R003',
-    description: 'Labor shortage',
-    probability: 'Low',
-    impact: 'High',
-    score: 10,
-    mitigation: 'Sub-contractor agreements signed',
-    status: 'Mitigated',
+    risk_id: 'R-003',
+    description: 'Skilled labor shortage',
+    category: 'Resource',
+    impact: 'Medium',
+    likelihood: 'High',
+    mitigation_status: 'In Progress',
   },
 ];
 
 const RiskManager: React.FC = () => {
-  const columns = [
-    { title: 'ID', dataIndex: 'riskId', key: 'riskId' },
-    { title: 'Description', dataIndex: 'description', key: 'description', width: '30%' },
-    {
-      title: 'Probability',
-      dataIndex: 'probability',
-      key: 'probability',
-      render: (prob: string) => {
-        let color = 'green';
-        if (prob === 'Medium') color = 'orange';
-        if (prob === 'High') color = 'red';
-        return <Tag color={color}>{prob.toUpperCase()}</Tag>;
-      },
-    },
-    {
-        title: 'Impact',
-        dataIndex: 'impact',
-        key: 'impact',
-        render: (imp: string) => {
-          let color = 'green';
-          if (imp === 'Medium') color = 'orange';
-          if (imp === 'High') color = 'red';
-          return <Tag color={color}>{imp.toUpperCase()}</Tag>;
+    const columns = [
+        { title: 'ID', dataIndex: 'risk_id', key: 'risk_id' },
+        { title: 'Description', dataIndex: 'description', key: 'description' },
+        { title: 'Category', dataIndex: 'category', key: 'category' },
+        {
+          title: 'Impact',
+          dataIndex: 'impact',
+          key: 'impact',
+          render: (impact: string) => (
+            <Tag color={impact === 'High' ? 'red' : impact === 'Medium' ? 'orange' : 'green'}>
+              {impact.toUpperCase()}
+            </Tag>
+          ),
         },
-      },
-    { title: 'Score', dataIndex: 'score', key: 'score', sorter: (a, b) => a.score - b.score },
-    { title: 'Mitigation Plan', dataIndex: 'mitigation', key: 'mitigation', width: '30%' },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status: string) => {
-          let color = 'default';
-          if (status === 'In Progress') color = 'processing';
-          if (status === 'Mitigated') color = 'success';
-          return <Tag color={color}>{status}</Tag>;
+        {
+            title: 'Likelihood',
+            dataIndex: 'likelihood',
+            key: 'likelihood',
+            render: (likelihood: string) => (
+              <Tag color={likelihood === 'High' ? 'red' : likelihood === 'Medium' ? 'orange' : 'green'}>
+                {likelihood.toUpperCase()}
+              </Tag>
+            ),
         },
-      },
-  ];
+        { 
+            title: 'Mitigation Status', 
+            dataIndex: 'mitigation_status', 
+            key: 'mitigation_status'
+        },
+    ];
 
   return (
     <div>
-        <Title level={4}>Predictive Risk Manager</Title>
+        <Title level={4}>Project Risk Management</Title>
         <Row gutter={16} style={{ marginBottom: 24}}>
-            <Col span={8}>
-                <Card>
-                    <p>Risk Heatmap (Probability vs. Impact)</p>
-                    <div style={{height: 150, background: '#f5f5f5', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                        <ThunderboltOutlined style={{fontSize: 48, color: '#ccc'}}/>
-                    </div>
+            <Col span={12}>
+                <Card title="Overall Risk Exposure">
+                    <Progress type="dashboard" percent={65} format={percent => `${percent} (High)`} />
                 </Card>
             </Col>
-            <Col span={16}>
+            <Col span={12}>
                 <Card title="Mitigation Progress">
-                    <Row>
-                        <Col span={12}><Progress type="circle" percent={33} format={() => 'Mitigated'} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} /></Col>
-                        <Col span={12}><Progress type="circle" percent={66} format={() => 'In Progress'} status="exception"/></Col>
-                    </Row>
+                    <Progress percent={40} status="active" />
+                    <p>4 out of 10 identified risks have active mitigation plans.</p>
                 </Card>
             </Col>
         </Row>
-      <Table
-        columns={columns}
-        dataSource={riskData}
-        pagination={false}
-        bordered
-        title={() => 'Project Risk Register'}
-      />
+        <Table
+            columns={columns}
+            dataSource={riskData}
+            pagination={false}
+            bordered
+            title={() => 'Risk Register'}
+        />
     </div>
   );
 };

@@ -5,8 +5,19 @@ import { CheckCircleOutlined, IssuesCloseOutlined, BarChartOutlined } from '@ant
 
 const { Title } = Typography;
 
-// Mock data for quantity comparison
-const comparisonData = [
+// Define an interface for the data structure
+interface ComparisonItem {
+  key: string;
+  item: string;
+  description: string;
+  unit: string;
+  ai_quantity: number;
+  manual_quantity: number;
+  historical_avg: number;
+}
+
+// Mock data for quantity comparison with the new interface
+const comparisonData: ComparisonItem[] = [
   {
     key: '1',
     item: 'A.1.1',
@@ -47,7 +58,7 @@ const QuantitySurveyor: React.FC = () => {
     {
       title: 'Variance',
       key: 'variance',
-      render: (_: any, record: any) => {
+      render: (_: unknown, record: ComparisonItem) => { // Use the specific type
         const variance = ((record.ai_quantity - record.manual_quantity) / record.manual_quantity) * 100;
         const color = Math.abs(variance) > 5 ? 'volcano' : 'green';
         return <Tag color={color}>{variance.toFixed(2)}%</Tag>;
