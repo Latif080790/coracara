@@ -31,7 +31,7 @@ const generateTaskId = (tasks: Task[]): string => {
 
 
 const useSchedulerStore = create<SchedulerState>()(persist(
-    (set, get) => ({
+    (set) => ({
         tasks: [
             { id: '1', name: 'Foundation', duration: 5, predecessors: [] },
             { id: '2', name: 'Framing', duration: 10, predecessors: ['1'] },

@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, Typography, Card, Row, Col, Statistic, Input } from 'antd'; // Removed InputNumber
 import { LineChartOutlined } from '@ant-design/icons'; // Removed DollarCircleOutlined
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Search } = Input;
 
 // Mock data for rate analysis

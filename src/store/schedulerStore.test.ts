@@ -1,82 +1,82 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import useSchedulerStore, { Task } from './schedulerStore';
+import useSchedulerStore from './schedulerStore';
 
-// Mengatur ulang store ke state awal sebelum setiap pengujian untuk memastikan isolasi
 beforeEach(() => {
-  // Mengambil state awal dari implementasi store
-  const initialState = useSchedulerStore.getState();
-  // Membuat ulang tugas awal untuk menghindari mutasi antar pengujian
-  const initialTasks: Task[] = [
-    { id: 'A', name: 'Penggalian', duration: 2, predecessors: [], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'B', name: 'Pondasi', duration: 4, predecessors: ['A'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'C', name: 'Struktur', duration: 5, predecessors: ['B'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'D', name: 'Atap', duration: 3, predecessors: ['C'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'E', name: 'Pekerjaan Eksterior', duration: 4, predecessors: ['D'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'F', name: 'Pekerjaan Interior', duration: 6, predecessors: ['E'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    { id: 'G', name: 'Penyelesaian', duration: 2, predecessors: ['F'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-  ];
-  useSchedulerStore.setState({ ...initialState, tasks: initialTasks });
+    // Reset the store to its initial state defined in the store file
+    const initialState = useSchedulerStore.getState();
+    useSchedulerStore.setState({
+        ...initialState,
+        tasks: [
+            { id: '1', name: 'Foundation', duration: 5, predecessors: [] },
+            { id: '2', name: 'Framing', duration: 10, predecessors: ['1'] },
+            { id: '3', name: 'Roofing', duration: 7, predecessors: ['2'] },
+            { id: '4', name: 'Plumbing', duration: 6, predecessors: ['2'] },
+            { id: '5', name: 'Electrical', duration: 8, predecessors: ['4'] },
+            { id: '6', name: 'Drywall', duration: 9, predecessors: ['5'] },
+            { id: '7', name: 'Painting', duration: 4, predecessors: ['6'] },
+            { id: '8', name: 'Finishing', duration: 3, predecessors: ['7'] },
+        ]
+    }, true);
 });
 
-describe('useSchedulerStore', () => {
-  it('should add a new task', () => {
-    const initialCount = useSchedulerStore.getState().tasks.length;
-    useSchedulerStore.getState().addTask('Tugas Baru', 5, ['A']);
-    const tasks = useSchedulerStore.getState().tasks;
-    expect(tasks.length).toBe(initialCount + 1);
-    expect(tasks[tasks.length - 1].name).toBe('Tugas Baru');
-  });
+describe('useSchedulerStore critical path calculation', () => {
 
-  it('should correctly calculate the critical path', () => {
-    // Panggil aksi utama
+  it('should calculate early and late start/finish times', () => {
     useSchedulerStore.getState().calculateCriticalPath();
     const tasks = useSchedulerStore.getState().tasks;
 
-    // Durasi proyek total harus sama dengan Waktu Selesai Paling Akhir dari tugas terakhir
-    const projectDuration = 26; // 2+4+5+3+4+6+2
-
-    // Verifikasi Waktu Selesai Paling Akhir
-    tasks.forEach(task => {
-        expect(task.lateFinish).toBeGreaterThan(0);
-    });
-    
-    const lastTask = tasks.find(t => t.id === 'G');
-    expect(lastTask?.lateFinish).toBe(projectDuration);
-
-    // Verifikasi bahwa semua tugas memiliki slack nol, karena ini adalah rantai linear
-    tasks.forEach(task => {
-      const slack = task.lateStart - task.earlyStart;
-      expect(slack).toBe(0);
-      expect(task.isCritical).toBe(true);
-    });
+    // Find a specific task to check, e.g., Task '3' (Roofing)
+    const task = tasks.find(t => t.id === '3');
+    expect(task).toBeDefined();
+    expect(task?.earlyStart).toBe(15); 
+    expect(task?.earlyFinish).toBe(22);
+    // More specific checks can be added based on a known correct calculation
   });
 
-  it('should handle a more complex graph with non-critical tasks', () => {
-    const tasks: Task[] = [
-        { id: 'A', name: 'Start', duration: 3, predecessors: [], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-        { id: 'B', name: 'Side Task', duration: 2, predecessors: ['A'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-        { id: 'C', name: 'Main Path', duration: 5, predecessors: ['A'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-        { id: 'D', name: 'Finish', duration: 2, predecessors: ['B', 'C'], earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, isCritical: false },
-    ];
-    useSchedulerStore.setState({ tasks });
+  it('should identify critical tasks correctly', () => {
     useSchedulerStore.getState().calculateCriticalPath();
-    const results = useSchedulerStore.getState().tasks;
+    const tasks = useSchedulerStore.getState().tasks;
+    const criticalPathIds = ['1', '2', '4', '5', '6', '7', '8']; // Based on the mock data
 
-    const taskA = results.find(t => t.id === 'A')!;
-    const taskB = results.find(t => t.id === 'B')!;
-    const taskC = results.find(t => t.id === 'C')!;
-    const taskD = results.find(t => t.id === 'D')!;
-
-    // Jalur A -> C -> D adalah kritis (3 + 5 + 2 = 10 hari)
-    // Jalur A -> B -> D bukan kritis (3 + 2 + 2 = 7 hari)
-    expect(taskA.isCritical).toBe(true);
-    expect(taskC.isCritical).toBe(true);
-    expect(taskD.isCritical).toBe(true);
-    expect(taskB.isCritical).toBe(false);
-
-    // Verifikasi slack untuk tugas non-kritis
-    const slackB = taskB.lateStart - taskB.earlyStart;
-    expect(slackB).toBe(3); // LS(B) = LF(D) - Dur(D) - Dur(B) = 10-2-2=6. ES(B)=EF(A)=3. Slack = 6-3=3
+    tasks.forEach(task => {
+        if (criticalPathIds.includes(task.id)) {
+            expect(task.isCritical).toBe(true);
+            // For critical tasks, slack (lateStart - earlyStart) should be 0
+            expect(task.lateStart! - task.earlyStart!).toBe(0);
+        } else {
+            expect(task.isCritical).toBe(false);
+        }
+    });
   });
+});
+
+describe('useSchedulerStore task manipulation', () => {
+
+    it('should add a new task and recalculate path', () => {
+        const initialTaskCount = useSchedulerStore.getState().tasks.length;
+        useSchedulerStore.getState().addTask('New Task', 5, ['8']);
+        useSchedulerStore.getState().calculateCriticalPath();
+        
+        const newTasks = useSchedulerStore.getState().tasks;
+        expect(newTasks.length).toBe(initialTaskCount + 1);
+
+        const newTask = newTasks.find(t => t.name === 'New Task');
+        expect(newTask).toBeDefined();
+        expect(newTask?.isCritical).toBe(true); // Since it follows the last task
+    });
+
+    it('should update a task and affect the critical path', () => {
+        // Increase duration of a non-critical task to make it critical
+        const taskB = useSchedulerStore.getState().tasks.find(t => t.id === '3'); // Task 3 is not critical initially
+        expect(taskB?.isCritical).toBe(false);
+
+        useSchedulerStore.getState().updateTask('3', { duration: 25 });
+        useSchedulerStore.getState().calculateCriticalPath();
+
+        const updatedTasks = useSchedulerStore.getState().tasks;
+        const updatedTaskB = updatedTasks.find(t => t.id === '3');
+        expect(updatedTaskB?.isCritical).toBe(true); // It should now be critical
+        expect(updatedTaskB!.lateStart! - updatedTaskB!.earlyStart!).toBe(0);
+    });
 });

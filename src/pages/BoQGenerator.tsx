@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { Table, Button, Space, Typography, Popconfirm } from 'antd'; // Removed Tag
+import { Table, Button, Space, Typography, Popconfirm } from 'antd'; 
 import { PlusOutlined, EditOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
-import useBoqStore, { BoQItem } from '../store/boqStore';
+import useBoqStore, { type BoQItem } from '../store/boqStore'; // Correct import type
 import AddEditBoQItemModal from '../components/AddEditBoQItemModal';
 
 const { Title, Text } = Typography;
@@ -53,7 +53,7 @@ const BoQGenerator: React.FC = () => {
         title: 'Amount',
         key: 'amount',
         align: 'right' as const,
-        render: (_: unknown, record: BoQItem) => { // Use BoQItem type
+        render: (_: unknown, record: BoQItem) => { 
             const amount = (record.quantity || 0) * (record.rate || 0);
             return <Text strong>{`Rp ${amount.toLocaleString()}`}</Text>;
         },
@@ -63,7 +63,7 @@ const BoQGenerator: React.FC = () => {
         key: 'actions',
         align: 'center' as const,
         width: 150,
-        render: (_: unknown, record: BoQItem) => ( // Use BoQItem type
+        render: (_: unknown, record: BoQItem) => ( 
             <Space>
                 <Button size="small" icon={<EditOutlined />} onClick={() => showEditModal(record)} />
                 <Button size="small" icon={<FileAddOutlined />} onClick={() => showAddModal(record.key)} />

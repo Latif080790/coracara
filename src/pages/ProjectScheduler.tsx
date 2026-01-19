@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Typography, Tag, Timeline, Popconfirm } from 'antd'; // Removed Modal
+import { Table, Button, Space, Typography, Tag, Timeline, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CaretRightOutlined } from '@ant-design/icons';
-import useSchedulerStore, { Task } from '../store/schedulerStore';
+import useSchedulerStore, { type Task } from '../store/schedulerStore'; // Correct import type
 import AddEditTaskModal from '../components/AddEditTaskModal';
 
 const { Title } = Typography;
@@ -65,7 +65,7 @@ const ProjectScheduler: React.FC = () => {
         key: 'actions',
         align: 'center' as const,
         width: 120,
-        render: (_: unknown, record: Task) => ( // Use Task type
+        render: (_: unknown, record: Task) => (
           <Space size="middle">
             <Button icon={<EditOutlined />} onClick={() => showEditTaskModal(record)}>Edit</Button>
             <Popconfirm

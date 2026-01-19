@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Modal, Form, Input, InputNumber } from 'antd'; // Removed TreeSelect
-import useBoqStore, { BoQItem } from '../store/boqStore';
+import { Modal, Form, Input, InputNumber } from 'antd'; 
+import useBoqStore, { type BoQItem } from '../store/boqStore';
 
 interface AddEditBoQItemModalProps {
   visible: boolean;
@@ -20,7 +20,7 @@ const AddEditBoQItemModal: React.FC<AddEditBoQItemModalProps> = ({ visible, onCl
     } else {
       form.resetFields();
       if (parentId) {
-        form.setFieldsValue({ parentId }); // This field doesn't exist in the form, but leaving as it was.
+        form.setFieldsValue({ parentId });
       }
     }
   }, [editingItem, parentId, form, visible]);
@@ -31,15 +31,17 @@ const AddEditBoQItemModal: React.FC<AddEditBoQItemModalProps> = ({ visible, onCl
       if (editingItem) {
         updateItem(editingItem.key, itemData);
       } else {
-        // The `addItem` function expects Omit<BoQItem, 'key'>
-        // The form values should align with this type.
         addItem(itemData as Omit<BoQItem, 'key'>, parentId);
       }
       onClose();
     });
   };
 
-  // Removed the unused treeData variable
+  const rateParser = (value: string | undefined): number => {
+    if (!value) return 0;
+    const parsed = parseFloat(value.replace(/Rp\s?|(,*)/g, ''));
+    return isNaN(parsed) ? 0 : parsed;
+  };
 
   return (
     <Modal
@@ -63,7 +65,12 @@ const AddEditBoQItemModal: React.FC<AddEditBoQItemModalProps> = ({ visible, onCl
           <InputNumber min={0} style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item name="rate" label="Rate" rules={[{ required: true, type: 'number' }]}>
-          <InputNumber min={0} style={{ width: '100%' }} formatter={value => `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={value => value!.replace(/Rp\s?|(,*)/g, '')} />
+          <InputNumber 
+            min={0} 
+            style={{ width: '100%' }} 
+            formatter={value => `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} 
+            parser={rateParser} 
+          />
         </Form.Item>
       </Form>
     </Modal>
