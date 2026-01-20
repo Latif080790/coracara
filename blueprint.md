@@ -1,39 +1,35 @@
+# **Blueprint Proyek: AEstimator Pro**
 
-# **Blueprint: AEstimator Pro**
-
-## **1. Visi Proyek & Standar Kualitas**
-
-**AEstimator Pro** adalah platform estimasi dan manajemen proyek konstruksi berbasis web yang dirancang untuk merevolusi cara para profesional AEC (Arsitektur, Engineering, & Konstruksi) merencanakan, mengestimasi, dan mengelola proyek.
-
-**Prinsip Inti:**
-- **Single Source of Truth**: Mengintegrasikan semua data proyek ke dalam satu platform terpusat.
-- **Modern & Intuitif**: Memberikan pengalaman pengguna premium melalui antarmuka yang bersih dan profesional.
-- **Modular & Skalabel**: Arsitektur berbasis komponen yang memungkinkan pengembangan fitur di masa depan.
-- **End-to-End Workflow**: Mencakup seluruh siklus hidup pra-konstruksi.
+Dokumen ini berfungsi sebagai cetak biru teknis dan strategis untuk pengembangan aplikasi AEstimator Pro. Ini menguraikan arsitektur, desain, peta jalan, dan rencana implementasi saat ini.
 
 ---
 
-## **2. Arsitektur Aplikasi & Tumpukan Teknologi**
+## **1. Ikhtisar Aplikasi**
 
-- **Frontend Framework**: React.js (dengan TypeScript)
-- **Build Tool**: Vite
-- **Component Library**: Ant Design (AntD)
-- **Routing**: `react-router-dom`
-- **State Management**: Zustand (dengan middleware persistensi)
-- **Testing**: Vitest dan React Testing Library
-- **Struktur Proyek**: `pages`, `components`, `layouts`, `router`, `store`, `assets`.
-- **Layout Inti**: `MainLayout.tsx`.
+**AEstimator Pro** adalah aplikasi web modern yang dirancang untuk merevolusi manajemen proyek konstruksi. Ini mengintegrasikan Bill of Quantities (BoQ), penjadwalan proyek, dan analisis biaya ke dalam satu platform yang mulus, didukung oleh wawasan berbasis AI untuk memberikan perkiraan yang lebih akurat dan cerdas.
 
 ---
 
-## **3. Modul & Fitur yang Diimplementasikan**
+## **2. Fitur Utama & Desain**
 
-### **Core Logic & UI Implemented**
-- **Intelligent Bill of Quantity (BoQ) Generator**: Manajemen state, struktur pohon, fungsionalitas CRUD, dan pengujian unit.
-- **AI-Assisted Project Scheduler**: Manajemen state, implementasi algoritma Jalur Kritis (CPM), integrasi UI, dan pengujian unit.
+-   **Dasbor Terpusat**: Memberikan gambaran umum proyek secara real-time.
+-   **Manajemen BoQ Interaktif**: Perincian biaya yang terperinci dan dapat disesuaikan.
+-   **Penjadwalan Jalur Kritis**: Visualisasi jadwal proyek dan dependensi tugas.
+-   **Analisis Harga Cerdas**: Perbandingan harga pasar dengan data historis.
+-   **Desain Modern & Responsif**: Dibangun dengan Ant Design untuk pengalaman pengguna yang bersih di semua perangkat.
+-   **Visualisasi Data Canggih**: Grafik dan bagan interaktif didukung oleh `@ant-design/charts`.
 
-### **UI Only Implemented**
-- **Dashboard Proyek**, **AI-Powered Drawing Analyzer**, **Hyper-Accurate Quantity Surveyor**, **Data-Driven Rate Analysis**, **Predictive Risk Manager**, **Comprehensive Reporting Suite**.
+---
+
+## **3. Modul Aplikasi & Komponen**
+
+-   **`Dashboard.tsx`**: Halaman utama dan titik masuk aplikasi.
+-   **`BoQGenerator.tsx`**: Mengelola dan menampilkan data Bill of Quantities.
+-   **`ProjectScheduler.tsx`**: Mengelola dan menampilkan jadwal proyek.
+-   **`RateAnalysis.tsx`**: Menganalisis dan membandingkan harga material/jasa.
+-   **`stores/`**: Berisi semua logika manajemen state (Zustand).
+    -   `boqStore.ts`
+    -   `schedulerStore.ts`
 
 ---
 
@@ -41,37 +37,40 @@
 
 Ini adalah rencana bertahap untuk mengembangkan AEstimator Pro menjadi aplikasi yang tangguh, kaya fitur, dan siap untuk lingkungan enterprise.
 
-### **Fase 1: Fondasi Logika & Interaktivitas (Fokus Saat Ini)**
-1.  **Lengkapi Logika Inti**: Implementasikan logika bisnis dan manajemen state untuk semua modul yang tersisa.
-2.  **Interaktivitas Penuh**: Aktifkan fungsionalitas CRUD (Create, Read, Update, Delete) yang lengkap di seluruh antarmuka pengguna.
-3.  **Persistensi Data**: Pastikan state aplikasi (misalnya, data BoQ dan Jadwal) disimpan secara lokal dan tidak hilang saat halaman disegarkan.
+### **Fase 1: Fondasi Logika & Interaktivitas (Selesai)**
 
-### **Fase 2: Fitur Lanjutan & Integrasi**
-- **Integrasi AI**: Hubungkan UI ke layanan AI/ML yang sebenarnya untuk analisis.
-- **Visualisasi Data**: Tingkatkan dasbor dan laporan dengan grafik yang lebih interaktif.
-- **Kolaborasi Pengguna**: Perkenalkan fitur untuk memungkinkan banyak pengguna mengerjakan proyek yang sama.
+### **Fase 2: Fitur Lanjutan & Integrasi (Selesai)**
 
-### **Fase 3: Kesiapan Enterprise**
-- **Otentikasi & Otorisasi**: Implementasikan sistem login pengguna dengan kontrol akses berbasis peran.
-- **Manajemen Proyek**: Izinkan pengguna untuk membuat, beralih, dan mengelola beberapa proyek.
-- **Skalabilitas & Keamanan**: Optimalkan kinerja dan terapkan praktik keamanan terbaik.
+### **Fase 3: Kesiapan Enterprise (Fokus Saat Ini)**
+-   **Otentikasi & Otorisasi (Fokus Saat Ini)**: Implementasikan sistem login pengguna dengan kontrol akses berbasis peran.
+-   **Manajemen Proyek**: Izinkan pengguna untuk membuat, beralih, dan mengelola beberapa proyek.
+-   **Skalabilitas & Keamanan**: Optimalkan kinerja dan terapkan praktik keamanan terbaik.
 
 ---
 
-## **5. Rencana Pengembangan Saat Ini: Interaktivitas & Persistensi**
+## **5. Rencana Pengembangan Saat Ini: Fase 3 - Otentikasi & Otorisasi**
 
-**Tujuan**: Mengubah aplikasi dari mode "hanya-baca" menjadi mode interaktif penuh dan memastikan data pengguna tetap ada.
+**Tujuan**: Mengamankan aplikasi dengan memperkenalkan alur otentikasi pengguna, termasuk halaman login dan rute yang dilindungi.
 
 **Langkah-langkah yang Direncanakan:**
 
-1.  **Implementasikan Persistensi Data**: 
-    - Instal `zustand/middleware`.
-    - Perbarui `boqStore.ts` dan `schedulerStore.ts` untuk menggunakan middleware `persist`, menyimpan state ke `localStorage`.
+1.  **Perbarui `userStore.ts`**:
+    -   Tambahkan flag `isAuthenticated` ke dalam *store*.
+    -   Implementasikan fungsi `login(email, password)` yang menyimulasikan validasi kredensial dan mengatur `isAuthenticated` menjadi `true`.
+    -   Implementasikan fungsi `logout()` yang mengatur ulang status otentikasi.
 
-2.  **Aktifkan Interaktivitas Penuh di Penjadwal Proyek**:
-    - Buat komponen modal (`AddEditTaskModal.tsx`) untuk menambah dan mengedit tugas.
-    - Hubungkan tombol "Add Task" dan fungsionalitas klik-baris tabel untuk membuka modal.
-    - Implementasikan fungsi `removeTask` dengan dialog konfirmasi.
+2.  **Buat Halaman Login**:
+    -   Buat komponen `LoginPage.tsx` baru di `src/pages`.
+    -   Desain formulir login yang menarik secara visual dengan input untuk email dan kata sandi, validasi, dan tombol "Log In".
 
-3.  **Tingkatkan Interaktivitas BoQ**: 
-    - Terapkan pola yang sama (modal, tombol) untuk mengaktifkan fungsionalitas CRUD penuh untuk item BoQ.
+3.  **Implementasikan Rute yang Dilindungi**:
+    -   Buat komponen `ProtectedRoute.tsx` yang memeriksa flag `isAuthenticated` dari `userStore`.
+    -   Jika pengguna tidak diautentikasi, komponen ini akan mengalihkannya ke halaman login.
+
+4.  **Perbarui `AppRouter.tsx`**:
+    -   Bungkus `MainLayout` di dalam `ProtectedRoute` untuk mengamankan semua rute aplikasi utama.
+    -   Tambahkan rute `/login` baru yang merender `LoginPage`.
+
+5.  **Perbarui `MainLayout.tsx`**:
+    -   Tambahkan menu dropdown pengguna pada avatar di header, yang berisi opsi "Logout".
+    -   Memanggil fungsi `logout()` dari `userStore` saat diklik.

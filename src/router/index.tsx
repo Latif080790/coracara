@@ -10,20 +10,32 @@ import RateAnalysis from '../pages/RateAnalysis';
 import ProjectScheduler from '../pages/ProjectScheduler';
 import RiskManager from '../pages/RiskManager';
 import ReportingSuite from '../pages/ReportingSuite';
+import LoginPage from '../pages/LoginPage';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
     path: '/',
-    element: <MainLayout />,
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'drawing-analyzer', element: <DrawingAnalyzer /> },
-      { path: 'boq-generator', element: <BoQGenerator /> },
-      { path: 'quantity-surveyor', element: <QuantitySurveyor /> },
-      { path: 'rate-analysis', element: <RateAnalysis /> },
-      { path: 'project-scheduler', element: <ProjectScheduler /> },
-      { path: 'risk-manager', element: <RiskManager /> },
-      { path: 'reporting-suite', element: <ReportingSuite /> },
+      {
+        path: '/',
+        element: <MainLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: 'drawing-analyzer', element: <DrawingAnalyzer /> },
+          { path: 'boq-generator', element: <BoQGenerator /> },
+          { path: 'quantity-surveyor', element: <QuantitySurveyor /> },
+          { path: 'rate-analysis', element: <RateAnalysis /> },
+          { path: 'project-scheduler', element: <ProjectScheduler /> },
+          { path: 'risk-manager', element: <RiskManager /> },
+          { path: 'reporting-suite', element: <ReportingSuite /> },
+        ],
+      },
     ],
   },
 ]);

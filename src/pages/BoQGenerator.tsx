@@ -1,15 +1,17 @@
 
 import React, { useState } from 'react';
 import { Table, Button, Space, Typography, Popconfirm } from 'antd'; 
-import { PlusOutlined, EditOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
-import useBoqStore, { type BoQItem } from '../store/boqStore'; // Correct import type
+import { PlusOutlined, EditOutlined, DeleteOutlined, FileAddOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import useBoqStore, { type BoQItem } from '../store/boqStore';
 import AddEditBoQItemModal from '../components/AddEditBoQItemModal';
+import AIAnalysisModal from '../components/AIAnalysisModal'; // Import the new modal
 
 const { Title, Text } = Typography;
 
 const BoQGenerator: React.FC = () => {
-  const { items, removeItem } = useBoqStore();
+  const { items, removeItem, analyzeBoq } = useBoqStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAnalysisModalVisible, setIsAnalysisModalVisible] = useState(false); // State for the new modal
   const [editingItem, setEditingItem] = useState<BoQItem | null>(null);
   const [parentKey, setParentKey] = useState<string | null>(null);
 
@@ -29,6 +31,11 @@ const BoQGenerator: React.FC = () => {
     setIsModalVisible(false);
     setEditingItem(null);
     setParentKey(null);
+  };
+
+  const handleAnalysis = () => {
+    analyzeBoq(); // Trigger the analysis in the store
+    setIsAnalysisModalVisible(true);
   };
 
   const columns = [
@@ -99,6 +106,9 @@ const BoQGenerator: React.FC = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => showAddModal(null)}>
           Add Top-Level Item
         </Button>
+        <Button icon={<ThunderboltOutlined />} onClick={handleAnalysis}>
+            Analyze with AI
+        </Button>
       </Space>
       <Table
         columns={columns}
@@ -122,6 +132,10 @@ const BoQGenerator: React.FC = () => {
         onClose={handleModalClose}
         editingItem={editingItem}
         parentId={parentKey}
+      />
+      <AIAnalysisModal
+        visible={isAnalysisModalVisible}
+        onClose={() => setIsAnalysisModalVisible(false)}
       />
     </div>
   );

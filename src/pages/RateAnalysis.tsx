@@ -1,56 +1,80 @@
 
-import React from 'react';
-import { Table, Typography, Card, Row, Col, Statistic, Input } from 'antd'; // Removed InputNumber
-import { LineChartOutlined } from '@ant-design/icons'; // Removed DollarCircleOutlined
+import React, { useMemo, useState } from 'react';
+import { Typography, Card, Row, Col, Statistic, Input } from 'antd';
+import { LineChartOutlined } from '@ant-design/icons';
+import { Column } from '@ant-design/plots';
 
 const { Title } = Typography;
 const { Search } = Input;
 
 // Mock data for rate analysis
-const data = [
+const sourceData = [
   {
     key: '1',
     resource: 'Cement (Portland)',
     unit: 'bag',
-    aestimator_rate: 68000,
-    market_rate_1: 70000,
-    market_rate_2: 67500,
+    'AEstimator Rate': 68000,
+    'Supplier A': 70000,
+    'Supplier B': 67500,
   },
   {
     key: '2',
     resource: 'Reinforcement Steel',
     unit: 'kg',
-    aestimator_rate: 15500,
-    market_rate_1: 16000,
-    market_rate_2: 15200,
-  },
-  // ... more data
-];
-
-const columns = [
-  { title: 'Resource', dataIndex: 'resource', key: 'resource' },
-  { title: 'Unit', dataIndex: 'unit', key: 'unit' },
-  {
-    title: 'AEstimator Rate (Rp)',
-    dataIndex: 'aestimator_rate',
-    key: 'aestimator_rate',
-    render: (rate: number) => rate.toLocaleString(),
+    'AEstimator Rate': 15500,
+    'Supplier A': 16000,
+    'Supplier B': 15200,
   },
   {
-    title: 'Supplier A Rate (Rp)',
-    dataIndex: 'market_rate_1',
-    key: 'market_rate_1',
-    render: (rate: number) => rate.toLocaleString(),
+    key: '3',
+    resource: 'Sand',
+    unit: 'm³',
+    'AEstimator Rate': 250000,
+    'Supplier A': 255000,
+    'Supplier B': 248000,
   },
   {
-    title: 'Supplier B Rate (Rp)',
-    dataIndex: 'market_rate_2',
-    key: 'market_rate_2',
-    render: (rate: number) => rate.toLocaleString(),
+    key: '4',
+    resource: 'Gravel',
+    unit: 'm³',
+    'AEstimator Rate': 280000,
+    'Supplier A': 290000,
+    'Supplier B': 275000,
   },
 ];
 
 const RateAnalysis: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const transformedData = useMemo(() => {
+    const data = sourceData
+      .filter(d => d.resource.toLowerCase().includes(searchTerm.toLowerCase()))
+      .flatMap(d => [
+        { resource: d.resource, rate: d['AEstimator Rate'], source: 'AEstimator Rate' },
+        { resource: d.resource, rate: d['Supplier A'], source: 'Supplier A' },
+        { resource: d.resource, rate: d['Supplier B'], source: 'Supplier B' },
+      ]);
+    return data;
+  }, [searchTerm]);
+
+  const chartConfig = {
+    data: transformedData,
+    xField: 'resource',
+    yField: 'rate',
+    groupField: 'source',
+    isGroup: true as const,
+    height: 400,
+    yAxis: {
+        title: { text: 'Rate (Rp)' },
+        label: {
+            formatter: (v: string) => new Intl.NumberFormat('id-ID').format(Number(v)),
+        },
+    },
+    tooltip: {
+        formatter: (datum: any) => ({ name: datum.source, value: `Rp ${new Intl.NumberFormat('id-ID').format(datum.rate)}` }),
+    },
+  };
+
   return (
     <div>
         <Title level={4}>Market Rate Analysis</Title>
@@ -60,10 +84,15 @@ const RateAnalysis: React.FC = () => {
                     <Statistic title="Inflation Adjustment" value={2.5} suffix="%" prefix={<LineChartOutlined />} />
                 </Card>
             </Col>
-            {/* Other stats can go here */}
         </Row>
-        <Search placeholder="Search for a resource..." style={{marginBottom: 16, width: 300}} />
-        <Table columns={columns} dataSource={data} pagination={false} bordered />
+        <Card>
+            <Search 
+                placeholder="Search for a resource..." 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                style={{marginBottom: 16, width: 300}}
+            />
+            <Column {...chartConfig} />
+        </Card>
     </div>
   );
 };
